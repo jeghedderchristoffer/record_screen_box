@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_plugin/flutter_foreground_plugin.dart';
 
-class ScreenRecorderBox {
+class RecordScreenBox {
   static const MethodChannel _channel =
       const MethodChannel('screen_recorder_box');
 

@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
 
   void startRecording() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    bool result = await ScreenRecorderBox.startRecording(
+    bool result = await RecordScreenBox.startRecording(
       'test',
       appDocDir.path,
     );
@@ -35,19 +35,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   void stopRecording() async {
-    String result = await ScreenRecorderBox.stopRecording();
+    String result = await RecordScreenBox.stopRecording();
     print("STOP RESULT: " + result.toString());
     setState(() {}); // UPDATE UI
   }
 
   void pauseRecording() async {
-    bool result = await ScreenRecorderBox.pauseRecording();
+    bool result = await RecordScreenBox.pauseRecording();
     print("PAUSE RESULT: " + result.toString());
     setState(() {}); // UPDATE UI
   }
 
   void resumeRecording() async {
-    bool result = await ScreenRecorderBox.resumeRecording();
+    bool result = await RecordScreenBox.resumeRecording();
     print("RESUME RESULT: " + result.toString());
     setState(() {}); // UPDATE UI
   }
@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     Widget isRecording = FutureBuilder(
-      future: ScreenRecorderBox.isRecording,
+      future: RecordScreenBox.isRecording,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Text("IS RECORDING: " + snapshot.data.toString());
@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     Widget hasBeenStarted = FutureBuilder(
-      future: ScreenRecorderBox.hasBeenStarted,
+      future: RecordScreenBox.hasBeenStarted,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Text("HAS BEEN STARTED: " + snapshot.data.toString());

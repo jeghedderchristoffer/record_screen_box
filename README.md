@@ -29,22 +29,22 @@ Does not work yet - will be implemented shortly
 ```dart
 // Start recording (return a bool telling if screen recording has started or not)
 String somePath = '/path/to/whatever/folder/you/like';
-bool result = await ScreenRecorderBox.startRecording('screen_recording_name', somePath);
+bool result = await RecordScreenBox.startRecording('screen_recording_name', somePath);
 
 // Stop recording (returns the screen recording path)
-String result = await ScreenRecorderBox.stopRecording();
+String result = await RecordScreenBox.stopRecording();
 
 // Pause recording (returns a bool telling if recording has been paused or not)
-bool result = await ScreenRecorderBox.pauseRecording();
+bool result = await RecordScreenBox.pauseRecording();
 
 // Resume recording (returns a bool telling if recording has resumed or not)
-bool result = await ScreenRecorderBox.resumeRecording();
+bool result = await RecordScreenBox.resumeRecording();
 
 // Find out if screen is being recorded right now (it returns false on paused recording)
-bool isRecording = ScreenRecorderBox.isRecording;
+bool isRecording = RecordScreenBox.isRecording;
 
 // Find out if recording has been started (returns true if recording not stopped)
-bool hasBeenStarted = ScreenRecorderBox.hasBeenStarted;
+bool hasBeenStarted = RecordScreenBox.hasBeenStarted;
 ```
 
 ## Questions?
