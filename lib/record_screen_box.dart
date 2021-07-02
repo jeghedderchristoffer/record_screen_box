@@ -27,7 +27,7 @@ class RecordScreenBox {
     print(isStarted);
 
     // Stop foreground if not started...
-    if (!isStarted) {
+    if (!isStarted && Platform.isAndroid) {
       await FlutterForegroundPlugin.stopForegroundService();
     }
 

@@ -26,6 +26,7 @@ class _MyAppState extends State<MyApp> {
 
   void startRecording() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
+
     bool result = await RecordScreenBox.startRecording(
       'test',
       appDocDir.path,
