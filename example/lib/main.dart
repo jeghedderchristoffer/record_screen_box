@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record_screen_box/record_screen_box.dart';
@@ -39,6 +40,9 @@ class _MyAppState extends State<MyApp> {
     String result = await RecordScreenBox.stopRecording();
     print("STOP RESULT: " + result.toString());
     setState(() {}); // UPDATE UI
+
+    final openResult = await OpenFile.open(result);
+    print(openResult.message);
   }
 
   void pauseRecording() async {

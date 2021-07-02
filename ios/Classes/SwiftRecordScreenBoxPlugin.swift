@@ -3,6 +3,7 @@ import UIKit
 import ReplayKit
 import Photos
 
+@available(iOS 12.0, *)
 public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
     let recorder = RPScreenRecorder.shared()
     
@@ -15,6 +16,8 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
     var audioWriterInput: AVAssetWriterInput!
     
     var result: FlutterResult?
+    
+    var isRecording: Bool = false
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "screen_recorder_box", binaryMessenger: registrar.messenger())
@@ -46,11 +49,11 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
             // Is recording
         } else if (method == "isRecording") {
             print("isRecording")
-            result(self.recorder.isRecording)
+            result(self.isRecording)
             // Has been started
         } else if (method == "hasBeenStarted") {
             print("hasBeenStarted")
-            result(self.recorder.isRecording)
+            result(self.isRecording)
         }
     }
     
@@ -58,10 +61,10 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as! Dictionary<String, Any>
         
         // Set values from arguments passed to ios
-        self.videoName = arguments["name"]! as! String
+        self.videoName = arguments["name"]! as! String + ".mp4"
         
-        let path = arguments["path"]! as! String
-        self.pathToSaveRecording = URL(fileURLWithPath: path.appending(self.videoName))
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+        self.pathToSaveRecording = URL(fileURLWithPath: path.appendingPathComponent(self.videoName))
         
         self.result = result
     }
@@ -115,15 +118,7 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
         self.audioWriterInput?.expectsMediaDataInRealTime = true;
         self.videoWriter?.add(audioWriterInput!);
         
-        print("START CAPTURE")
-        self.recorder.startCapture { buffer, type, error in
-            print("CAPTURE")
-        } completionHandler: { error in
-            print("COMPLETE")
-        }
-
-        /*self.recorder.startCapture(handler: { (cmSampleBuffer, rpSampleType, error) in
-            print("STARTED????")
+        self.recorder.startCapture(handler: { (cmSampleBuffer, rpSampleType, error) in
             guard error == nil else {
                 //Handle error
                 print("Error starting capture");
@@ -131,55 +126,40 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
                 return;
             }
             
-            print("SAMPLE TYPE")
-            print(rpSampleType)
-            
-            // If video sample type
-            if (rpSampleType == RPSampleBufferType.video) {
-                print("Writing video...");
-                
-                if (self.videoWriter?.status == AVAssetWriter.Status.unknown) {
+            if (rpSampleType == .video) {
+                if self.videoWriter?.status == AVAssetWriter.Status.unknown {
+                    self.isRecording = true
                     self.result!(true)
                     self.videoWriter?.startWriting()
                     self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                 }
                 
-                if (self.videoWriter?.status == AVAssetWriter.Status.writing) {
+                if self.videoWriter?.status == AVAssetWriter.Status.writing {
                     if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
-                        print("Append sample...");
                         if  self.videoWriterInput?.append(cmSampleBuffer) == false {
-                            print("Problems writing video")
                             self.result!(false)
                         }
                     }
                 }
             }
             
-            // If audio sample type
-            if (rpSampleType == RPSampleBufferType.audioMic) {
-                print("Writing audio....");
+            if (rpSampleType == .audioMic) {
                 if self.audioWriterInput?.isReadyForMoreMediaData == true {
-                    print("starting audio....");
-                    if self.audioWriterInput?.append(cmSampleBuffer) == false {
-                        print("Problems writing audio")
-                    }
+                    if self.audioWriterInput?.append(cmSampleBuffer) == false {}
                 }
             }
         }){(error) in
-            print("HERE")
-            print(error)
             guard error == nil else {
                 //Handle error
                 print("Screen record not allowed");
                 self.result!(false)
                 return;
             }
-        }*/
-        
-        print("END OF START SCREEN RECORDING")
+        }
     }
     
     @objc func stopRecording() {
+        self.isRecording = false
         //Stop Recording the screen
         self.recorder.stopCapture( handler: { (error) in
             print("Stopping recording...");
@@ -189,8 +169,6 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
         self.audioWriterInput?.markAsFinished();
         
         self.videoWriter?.finishWriting {
-            print("Finished writing video");
-            
             //Now save the video
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.pathToSaveRecording!)
