@@ -30,13 +30,11 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
         
         // Start recording
         if (method == "startScreenRecording") {
-            print("startScreenRecording")
             self.initializeProperties(call: call, result: result)
             self.startRecording()
             
             // Stop recording
         } else if (method == "stopScreenRecording") {
-            print("stopScreenRecording")
             self.stopRecording()
             let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
             result(String(documentsPath.appendingPathComponent(videoName)))
@@ -48,11 +46,9 @@ public class SwiftRecordScreenBoxPlugin: NSObject, FlutterPlugin {
             print("NOT SUPPORTED ON IOS")
             // Is recording
         } else if (method == "isRecording") {
-            print("isRecording")
             result(self.isRecording)
             // Has been started
         } else if (method == "hasBeenStarted") {
-            print("hasBeenStarted")
             result(self.isRecording)
         }
     }
